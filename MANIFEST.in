@@ -1,0 +1,2 @@
+recursive-include src/ledmatrix/font/data *.bdf
+recursive-include src/ledmatrix/data *.rules

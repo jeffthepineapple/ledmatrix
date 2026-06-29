@@ -1,0 +1,3 @@
+# Framework Laptop 16 Input Modules: USB CDC ACM serial endpoints
+# Install to /etc/udev/rules.d/ and reload udev. Review and adapt group/mode for your system.
+SUBSYSTEM=="tty", ATTRS{idVendor}=="32ac", ATTRS{idProduct}=="0020", MODE="0660", GROUP="plugdev", TAG+="uaccess"
