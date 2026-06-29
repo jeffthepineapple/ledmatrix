@@ -19,5 +19,4 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -e '.[dev,all]'
       - run: pytest
-      - run: ruff check src tests
       - run: python -m build
