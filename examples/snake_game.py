@@ -8,14 +8,19 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import os
 import random
-import select
 import sys
-import termios
 import time
-import tty
 from collections.abc import Iterator
 from dataclasses import dataclass, field
+
+if os.name == "nt":
+    import msvcrt
+else:
+    import select
+    import termios
+    import tty
 
 import _bootstrap  # noqa: F401
 
@@ -129,7 +134,7 @@ class SnakeGame:
 
 @contextlib.contextmanager
 def raw_terminal(enabled: bool) -> Iterator[None]:
-    if not enabled or not sys.stdin.isatty():
+    if os.name == "nt" or not enabled or not sys.stdin.isatty():
         yield
         return
 
@@ -142,6 +147,20 @@ def raw_terminal(enabled: bool) -> Iterator[None]:
 
 
 def read_key() -> str | None:
+    if os.name == "nt":
+        if not msvcrt.kbhit():
+            return None
+
+        key = msvcrt.getwch()
+        if key in ("\x00", "\xe0") and msvcrt.kbhit():
+            return {
+                "H": "\x1b[A",
+                "P": "\x1b[B",
+                "K": "\x1b[D",
+                "M": "\x1b[C",
+            }.get(msvcrt.getwch())
+        return key
+
     readable, _, _ = select.select([sys.stdin], [], [], 0)
     if not readable:
         return None
